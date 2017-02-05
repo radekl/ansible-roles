@@ -1,2 +1,11 @@
+# Personal data
+group_vars/*
+host_vars/*
 inventory/*
 playbooks/*
+
+# Retry files
+*.retry
+
+# Ignoring IDE's
+.idea/

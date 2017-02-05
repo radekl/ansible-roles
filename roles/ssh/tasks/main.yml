@@ -1,0 +1,35 @@
+---
+# tasks file for ssh
+
+# Apply configuration
+- name: configure all ssh daemons
+  template:
+    src: ssh_config
+    dest: /etc/ssh/{{item.daemon_name|default('ssh')}}_config
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - "{{ssh_configuration}}"
+
+- name: add services to systemd
+  template:
+    src: ssh_systemd
+    dest: /lib/systemd/system/{{item.daemon_name|default('ssh')}}.service
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - "{{ssh_configuration}}"
+
+
+# Add services to autostart and restart them
+- name: add all ssh daemons to autostart
+  systemd:
+    name: "{{item.daemon_name|default('ssh')}}"
+    enabled: yes
+    daemon_reload: yes
+    state: restarted
+  with_items:
+    - "{{ssh_configuration}}"
+

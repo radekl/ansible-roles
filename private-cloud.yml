@@ -1,0 +1,7 @@
+---
+
+- hosts: cloud
+  become: yes
+  roles:
+    - ssh
+
