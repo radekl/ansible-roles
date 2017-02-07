@@ -1,0 +1,10 @@
+{{item.google_authenticator.code}}
+" RATE_LIMIT 3 30
+{% if item.google_authenticator.extended_window is defined and item.google_authenticator.extended_window == True %}
+" WINDOW_SIZE 17
+{% endif %}
+" DISALLOW_REUSE
+" TOTP_AUTH
+{% for ecode in item.google_authenticator.emergency_codes %}
+{{ecode}}
+{% endfor %}

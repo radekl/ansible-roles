@@ -1,0 +1,38 @@
+---
+
+# tasks file for google_authenticator
+
+- name: install google authenticator pam module
+  apt:
+    name: libpam-google-authenticator
+    state: latest
+    cache_valid_time: 3600
+    update_cache: yes
+  tags: google_authenticator,init
+
+# This one is available in 2.3
+- name: add google authenticator to sshd pam.d
+  lineinfile:
+    dest: /etc/pam.d/sshd
+    line: "auth required pam_google_authenticator.so"
+    state: present
+  tags: google_authenticator,init
+#  pamd:
+#    name: sshd
+#    type: auth
+#    control: required
+#    module_path: pam_google_authenticator.so
+#  tags: google_authenticator,init
+
+# Add google authenticator configuration to each user which is provided in config
+- name: deploy user's google authenticator configuration
+  template:
+    dest: "~{{item.name}}/.google_authenticator"
+    src: google_authenticator.j2
+    mode: 0400
+    owner: "{{item.name}}"
+  with_items:
+    - "{{users}}"
+  when: item.google_authenticator is defined
+  no_log: True
+  tags: google_authenticator,config

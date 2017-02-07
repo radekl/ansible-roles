@@ -1,0 +1,15 @@
+---
+# tasks file for system
+
+# Set hostname
+- name: setting hostname
+  hostname:
+    name: "{{server.hostname}}"
+  tags: system,init
+
+# TODO: set FQDN
+
+- name: setting timezone
+  timezone:
+    name: "{{server.timezone}}"
+  tags: system,init
