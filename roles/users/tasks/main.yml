@@ -1,0 +1,27 @@
+---
+# tasks file for users
+
+# python -c "from passlib.hash import sha512_crypt; import getpass; print sha512_crypt.encrypt(getpass.getpass())"
+
+# Create accounts
+- name: create accounts
+  user:
+    name: "{{item.name}}"
+    comment: "{{item.description|default('created by ansible')}}"
+    state: present
+    password: "{{item.password}}"
+  with_items:
+    - "{{users}}"
+  tags: users,init
+
+# Apply authorized keys
+- name: add ssh keys
+  authorized_key:
+    user: "{{item.0.name}}"
+    state: present
+    key: "{{item.1}}"
+  with_subelements:
+    - "{{users}}"
+    - authorized_keys
+  tags: users,init
+

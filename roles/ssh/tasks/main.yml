@@ -11,6 +11,7 @@
     mode: 0644
   with_items:
     - "{{ssh_configuration}}"
+  tags: ssh,init
 
 - name: add services to systemd
   template:
@@ -21,15 +22,27 @@
     mode: 0644
   with_items:
     - "{{ssh_configuration}}"
+  tags: ssh,init
 
 
-# Add services to autostart and restart them
+# Add services to autostart
 - name: add all ssh daemons to autostart
   systemd:
     name: "{{item.daemon_name|default('ssh')}}"
     enabled: yes
     daemon_reload: yes
+  with_items:
+    - "{{ssh_configuration}}"
+  tags: ssh,init
+
+
+# Restart all ssh daemons
+- name: restart ssh daemons
+  systemd:
+    name: "{{item.daemon_name|default('ssh')}}"
     state: restarted
   with_items:
     - "{{ssh_configuration}}"
+  tags: ssh
+  when: not ansible_check_mode
 

@@ -1,0 +1,65 @@
+---
+# tasks file for users
+
+- name: allow all established connections
+  iptables:
+    chain: INPUT
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
+    ip_version: "{{item}}"
+  with_items:
+    - ipv4
+    - ipv6
+  tags: firewall,init
+
+- name: add user defined rules ipv4
+  iptables:
+    chain: "{{item.chain}}"
+    source: "{{item.src}}"
+    protocol: "{{item.proto}}"
+    match: "{{item.proto}}"
+    destination_port: "{{item.port}}"
+    jump: "{{item.action}}"
+    ip_version: ipv4
+    state: present
+    comment: "{{item.description|default('created by ansible')}}"
+  with_items:
+    - "{{firewall.ipv4.rules}}"
+  tags: firewall,init
+
+- name: set policy for ipv4 chains
+  iptables:
+    chain: "{{item.key}}"
+    policy: "{{item.value}}"
+    state: present
+    ip_version: ipv4
+  with_dict: "{{firewall.ipv4.policy}}"
+  tags: firewall,init
+  when: not ansible_check_mode
+
+
+# Same for ipv6
+- name: add user defined rules ipv6
+  iptables:
+    chain: "{{item.chain}}"
+    source: "{{item.src}}"
+    protocol: "{{item.proto}}"
+    match: "{{item.proto}}"
+    destination_port: "{{item.port}}"
+    jump: "{{item.action}}"
+    ip_version: ipv6
+    state: present
+    comment: "{{item.description|default('created by ansible')}}"
+  with_items:
+    - "{{firewall.ipv6.rules}}"
+  tags: firewall,init
+
+- name: set policy for ipv6 chains
+  iptables:
+    chain: "{{item.key}}"
+    policy: "{{item.value}}"
+    state: present
+    ip_version: ipv6
+  with_dict: "{{firewall.ipv6.policy}}"
+  tags: firewall,init
+  when: not ansible_check_mode
