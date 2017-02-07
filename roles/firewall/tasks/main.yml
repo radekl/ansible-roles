@@ -12,6 +12,15 @@
     - ipv6
   tags: firewall,init
 
+- name: allow icmp from all
+  iptables:
+    chain: INPUT
+    protocol: icmp
+    jump: "{{item.value.ping}}"
+    ip_version: "{{item.key}}"
+  with_dict: "{{firewall}}"
+  tags: firewall,init
+
 - name: add user defined rules ipv4
   iptables:
     chain: "{{item.chain}}"
