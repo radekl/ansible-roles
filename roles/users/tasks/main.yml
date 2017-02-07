@@ -10,8 +10,10 @@
     comment: "{{item.description|default('created by ansible')}}"
     state: present
     password: "{{item.password}}"
+    shell: /bin/bash
   with_items:
     - "{{users}}"
+  no_log: True
   tags: users,init
 
 # Apply authorized keys
@@ -23,5 +25,6 @@
   with_subelements:
     - "{{users}}"
     - authorized_keys
+  no_log: True
   tags: users,init
 

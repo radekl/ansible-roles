@@ -1,5 +1,5 @@
 ---
-# tasks file for users
+# tasks file for firewall
 
 - name: allow all established connections
   iptables:
@@ -44,7 +44,7 @@
     ip_version: ipv4
   with_dict: "{{firewall.ipv4.policy}}"
   tags: firewall,init
-  when: not ansible_check_mode
+  when: not ansible_check_mode # This is broken. Ansible's iptables module is setting this policy even in check mode
 
 
 # Same for ipv6
@@ -71,4 +71,4 @@
     ip_version: ipv6
   with_dict: "{{firewall.ipv6.policy}}"
   tags: firewall,init
-  when: not ansible_check_mode
+  when: not ansible_check_mode # This is broken. Ansible's iptables module is setting this policy even in check mode
