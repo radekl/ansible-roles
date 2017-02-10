@@ -1,0 +1,4 @@
+---
+
+nginx_sites_destdir: "/usr/share/nginx/html"
+nginx_sites_htmldirs: "private/nginx_sites/"

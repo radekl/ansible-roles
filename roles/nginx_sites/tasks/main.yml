@@ -1,0 +1,12 @@
+---
+# tasks file for nginx_sites
+
+# For each nginx_site
+
+- name: Copy site's data files
+  copy:
+    src: "{{item.root}}/{{item.path}}"
+    dest: "{{nginx_sites_destdir}}/"
+    owner: "{{nginx_user}}"
+  with_filetree: "{{nginx_sites_htmldirs}}"
+  when: item.state == 'directory' and item.path in nginx_sites
