@@ -1,0 +1,34 @@
+---
+
+- name: Remove distribution pip package
+  apt:
+    name: python-pip
+    state: latest
+
+- name: Install pip packages latest
+  pip:
+    name: "{{item}}"
+    state: latest
+  with_items:
+    - pip
+    - setuptools
+
+- name: Install pip packages versioned
+  pip:
+    name: "{{item.name}}"
+    state: present
+    version: "{{item.version}}"
+  with_items:
+    - { name: docker, version: "2.0.0" }
+    - { name: docker-py, version: "1.9.0" }
+    - { name: docker-compose, version: "1.9.0" }
+
+- name: Install docker.io
+  apt:
+    name: "docker.io"
+    state: present
+
+- name: Install git for project download
+  apt:
+    name: git
+    state: present

@@ -1,0 +1,8 @@
+---
+# handlers file for docker_projects
+
+- name: Reload project static
+  shell: docker-compose exec -dT web python manage.py collectstatic -c --no-input 2>&1 >/dev/null
+  args:
+    chdir: "/srv/dockers/{{item.key}}"
+  with_dict: "{{docker_repositories}}"

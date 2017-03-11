@@ -1,0 +1,41 @@
+---
+
+- name: Prepare (turn off nginx)
+  service:
+    name: nginx
+    state: stopped
+    enabled: no
+
+- name: Copy htpasswd
+  copy:
+    src: private/htpasswd
+    dest: /etc/nginx/.htpasswd
+
+- name: Create a project dir
+  file:
+    path: /srv/dockers
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+
+- name: We have only untrusted cert - turn down verification for now
+  git_config:
+    name: "http.sslVerify"
+    value: false
+    scope: global
+
+- name: Pull all required projects using git
+  git:
+    repo: "{{item.value.repository}}"
+    dest: "/srv/dockers/{{item.key}}"
+    force: yes
+  with_dict: "{{ docker_repositories }}"
+#  no_log: true
+  notify: "Reload project static"
+
+- name: Startup projects
+  docker_service:
+    project_src: "/srv/dockers/{{item.key}}"
+  with_dict: "{{docker_repositories}}"

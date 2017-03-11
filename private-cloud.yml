@@ -2,10 +2,13 @@
 
 - hosts: cloud
   become: yes
+  pre_tasks:
+    - apt: update_cache=true cache_valid_time=3600
   roles:
     - system
     - ssh
     - firewall
     - google_authenticator
     - { role: nginx_sites, tags: nginx }
+    - { role: docker_projects, tags: dockers }
 
